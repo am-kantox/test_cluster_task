@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Test.Distributed do
+defmodule Mix.Tasks.Test.Cluster do
   @moduledoc """
   Run tests for a distributed application.
 

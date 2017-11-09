@@ -1,6 +1,6 @@
-defmodule Mix.Tasks.Run.Distributed do
+defmodule Mix.Tasks.Run.Cluster do
   @moduledoc """
-  Run a project in a distributed environment.
+Run a project in a distributed environment.
 
   This mix task starts up a cluster of nodes before running the `Mix.Tasks.Run`
   mix task. The number of nodes to start (besides the master node) can be set
@@ -27,7 +27,6 @@ defmodule Mix.Tasks.Run.Distributed do
 
     Mix.Tasks.Run.run(["--no-start"|params])
 
-    #Application.ensure_started(:distributed_test)
     switches
     |> Keyword.get(:count, @default_count)
     |> DistributedEnv.start_link(app)

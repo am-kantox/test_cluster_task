@@ -1,5 +1,6 @@
 defmodule DistributedEnv do
   @moduledoc false
+  # The code is based on the `distributed_test` by Sam Schneider (credits!)
 
   use GenServer
 

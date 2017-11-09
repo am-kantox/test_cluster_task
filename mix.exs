@@ -1,16 +1,20 @@
-defmodule DistributedTest.Mixfile do
+defmodule TestClusterTask.Mixfile do
   use Mix.Project
 
+  @app :test_cluster_task
+
   def project do
-    [app: :distributed_test,
-     version: "0.2.4",
-     elixir: "~> 1.4",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     preferred_cli_env: [{:"test.distributed", :test}],
-     description: description(),
-     package: package(),
-     deps: deps()]
+    [
+      app: @app,
+      version: "0.2.4",
+      elixir: "~> 1.4",
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      preferred_cli_env: [{:"test.distributed", :test}],
+      description: description(),
+      package: package(),
+      deps: deps()
+    ]
   end
 
   def application do
@@ -18,21 +22,24 @@ defmodule DistributedTest.Mixfile do
   end
 
   defp deps do
-    [{:ex_doc, "~> 0.14.5", only: :dev}]
+    [{:ex_doc, "~> 0.14", only: :dev}]
   end
 
   defp description do
     """
-    Run tests in a distributed environment!
+    Run tests in a distributed environment (cluster with several nodes).
+
+    The code is based on the `distributed_test` by Sam Schneider (credits!)
     """
   end
 
   defp package do
     [
-     name: :distributed_test,
-     files: ["lib", "mix.exs", "README*", "LICENSE*"],
-     maintainers: ["Sam Schneider"],
-     licenses: ["MIT"],
-     links: %{"GitHub" => "https://github.com/sschneider1207/distributed_test"}]
+      name: @app,
+      files: ["lib", "mix.exs", "README*", "LICENSE*"],
+      maintainers: ["Aleksei Matiushkin"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/am-kantox/test_cluster_task"}
+    ]
   end
 end
