@@ -6,11 +6,11 @@ defmodule TestClusterTask.Mixfile do
   def project do
     [
       app: @app,
-      version: "0.2.4",
+      version: "0.3.0",
       elixir: "~> 1.4",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
-      preferred_cli_env: [{:"test.distributed", :test}],
+      preferred_cli_env: [{:"test.cluster", :test}],
       description: description(),
       package: package(),
       deps: deps()

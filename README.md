@@ -1,6 +1,6 @@
 # DistributedTest
 
-Runs Elixir tests in a distributed environment.
+Run tests in a distributed environment (cluster with several nodes).
 
 The code is based on the
 [`distributed_test`](https://github.com/sschneider1207/distributed_test)
@@ -26,7 +26,7 @@ by adding `test_cluster_task` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:test_cluster_task, "~> 0.2"}]
+  [{:test_cluster_task, "~> 0.3"}]
 end
 ```
 
