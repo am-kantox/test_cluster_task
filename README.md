@@ -1,4 +1,4 @@
-# DistributedTest
+# Mix tasks to test and run on several nodes
 
 Run tests in a distributed environment (cluster with several nodes).
 
