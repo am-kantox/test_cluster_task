@@ -6,8 +6,8 @@ defmodule DistributedEnv do
 
   @timeout 30_000
 
-  @primary "primary_foo_1"
-  @slave "slave_foo_"
+  @primary "-foo-0"
+  @slave "-foo-"
   @host "127.0.0.1"
 
   def start_link(count, app \\ nil) do
@@ -17,7 +17,7 @@ defmodule DistributedEnv do
   def stop(), do: GenServer.stop(__MODULE__)
 
   def init(count: count, app: app) do
-    spawn_master()
+    spawn_master(app)
     spawn_slaves(count, app)
     # FIXME
     {:ok, app}
@@ -30,15 +30,15 @@ defmodule DistributedEnv do
 
   ##############################################################################
 
-  defp spawn_master() do
-    :net_kernel.start([:"#{@primary}@127.0.0.1"])
+  defp spawn_master(app) do
+    :net_kernel.start([:"#{app}#{@primary}@#{@host}"])
     :erl_boot_server.start([])
     allow_boot(~c"#{@host}")
   end
 
   defp spawn_slaves(count, app) do
     1..count
-    |> Stream.map(fn index -> ~c"#{@slave}#{index}@#{@host}" end)
+    |> Stream.map(fn index -> ~c"#{app}#{@slave}#{index}@#{@host}" end)
     |> Stream.map(&Task.async(fn -> spawn_slave(&1, app) end))
     |> Stream.map(&Task.await(&1, @timeout))
     |> Enum.to_list()
