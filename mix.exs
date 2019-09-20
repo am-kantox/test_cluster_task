@@ -2,18 +2,20 @@ defmodule TestClusterTask.Mixfile do
   use Mix.Project
 
   @app :test_cluster_task
+  @version "0.3.1"
 
   def project do
     [
       app: @app,
-      version: "0.3.0",
+      version: @version,
       elixir: "~> 1.4",
-      build_embedded: Mix.env == :prod,
-      start_permanent: Mix.env == :prod,
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
       preferred_cli_env: [{:"test.cluster", :test}],
       description: description(),
       package: package(),
-      deps: deps()
+      deps: deps(),
+      docs: docs()
     ]
   end
 
@@ -36,10 +38,28 @@ defmodule TestClusterTask.Mixfile do
   defp package do
     [
       name: @app,
-      files: ["lib", "mix.exs", "README*", "LICENSE*"],
+      files: ~w|config lib mix.exs README.md|,
       maintainers: ["Aleksei Matiushkin"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/am-kantox/test_cluster_task"}
+      links: %{
+        "GitHub" => "https://github.com/am-kantox/#{@app}",
+        "Docs" => "https://hexdocs.pm/#{@app}"
+      }
+    ]
+  end
+
+  defp docs do
+    [
+      # main: "intro",
+      source_ref: "v#{@version}",
+      canonical: "http://hexdocs.pm/#{@app}",
+      # logo: "stuff/images/logo.png",
+      source_url: "https://github.com/am-kantox/#{@app}",
+      # assets: "stuff/images",
+      extras: [
+        "README.md"
+      ],
+      groups_for_modules: []
     ]
   end
 end

@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.Run.Cluster do
   @moduledoc """
-Run a project in a distributed environment.
+  Run a project in a distributed environment.
 
   This mix task starts up a cluster of nodes before running the `Mix.Tasks.Run`
   mix task. The number of nodes to start (besides the master node) can be set
@@ -16,22 +16,23 @@ defmodule Mix.Tasks.Run.Cluster do
   @default_count 4
 
   def run(params) do
+    app = Mix.Project.config()[:app]
 
-    app = Mix.Project.config[:app]
+    {switches, _, _} = OptionParser.parse(params, switches: [count: :integer])
 
-    {switches, _, _} = OptionParser.parse(params, [switches: [count: :integer]])
-    params = case Keyword.has_key?(switches, :count) do
-      true -> remove_count(params)
-      false -> params
-    end
+    params =
+      case Keyword.has_key?(switches, :count) do
+        true -> remove_count(params)
+        false -> params
+      end
 
-    Mix.Tasks.Run.run(["--no-start"|params])
+    Mix.Tasks.Run.run(["--no-start" | params])
 
     switches
     |> Keyword.get(:count, @default_count)
     |> DistributedEnv.start_link(app)
 
-    config_path = Mix.Project.config[:config_path]
+    config_path = Mix.Project.config()[:config_path]
     :rpc.multicall(Node.list(), Mix.Tasks.Run.Distributed, :load_config, [config_path])
 
     :rpc.eval_everywhere(Application, :ensure_all_started, [app])
@@ -44,6 +45,6 @@ defmodule Mix.Tasks.Run.Cluster do
 
   defp remove_count(params, acc \\ [])
   defp remove_count([], acc), do: :lists.reverse(acc)
-  defp remove_count(["--count"|[_num|rem]], acc), do: :lists.reverse(acc) ++ rem
-  defp remove_count([head|rem], acc), do: remove_count(rem, [head|acc])
+  defp remove_count(["--count" | [_num | rem]], acc), do: :lists.reverse(acc) ++ rem
+  defp remove_count([head | rem], acc), do: remove_count(rem, [head | acc])
 end

@@ -6,8 +6,8 @@ defmodule DistributedEnv do
 
   @timeout 30_000
 
-  @primary "primary"
-  @slave "slave"
+  @primary "primary_foo_1"
+  @slave "slave_foo_"
   @host "127.0.0.1"
 
   def start_link(count, app \\ nil) do
@@ -19,7 +19,8 @@ defmodule DistributedEnv do
   def init(count: count, app: app) do
     spawn_master()
     spawn_slaves(count, app)
-    {:ok, app} # FIXME
+    # FIXME
+    {:ok, app}
   end
 
   def terminate(_reason, _state) do
@@ -40,7 +41,7 @@ defmodule DistributedEnv do
     |> Stream.map(fn index -> ~c"#{@slave}#{index}@#{@host}" end)
     |> Stream.map(&Task.async(fn -> spawn_slave(&1, app) end))
     |> Stream.map(&Task.await(&1, @timeout))
-    |> Enum.to_list
+    |> Enum.to_list()
   end
 
   defp spawn_slave(node_host, app) do
@@ -62,7 +63,7 @@ defmodule DistributedEnv do
 
   defp allow_boot(host) do
     with {:ok, ipv4} <- :inet.parse_ipv4_address(host),
-      do: :erl_boot_server.add_slave(ipv4)
+         do: :erl_boot_server.add_slave(ipv4)
   end
 
   defp add_code_paths(node) do
@@ -70,7 +71,7 @@ defmodule DistributedEnv do
   end
 
   defp transfer_configuration(node) do
-    for {app_name, _, _} <- Application.loaded_applications do
+    for {app_name, _, _} <- Application.loaded_applications() do
       for {key, val} <- Application.get_all_env(app_name) do
         rpc(node, Application, :put_env, [app_name, key, val])
       end
@@ -80,7 +81,8 @@ defmodule DistributedEnv do
   defp ensure_applications_started(node, _app) do
     rpc(node, Application, :ensure_all_started, [:mix])
     rpc(node, Mix, :env, [Mix.env()])
-    for {app_name, _, _} <- Application.loaded_applications do
+
+    for {app_name, _, _} <- Application.loaded_applications() do
       rpc(node, Application, :ensure_all_started, [app_name])
     end
   end
