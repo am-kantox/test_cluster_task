@@ -47,7 +47,7 @@ defmodule DistributedEnv do
   defp spawn_slave(node_host, app) do
     with {:ok, node} <- :slave.start(~c"#{@host}", node_name(node_host), inet_loader_args()) do
       add_code_paths(node)
-      transfer_configuration(node)
+      transfer_configuration(node, app)
       ensure_applications_started(node, app)
       {:ok, node}
     end
@@ -70,8 +70,8 @@ defmodule DistributedEnv do
     rpc(node, :code, :add_paths, [:code.get_path()])
   end
 
-  defp transfer_configuration(node) do
-    for {app_name, _, _} <- Application.loaded_applications() do
+  defp transfer_configuration(node, app) do
+    for {app_name, _, _} <- [{app, nil, nil} | Application.loaded_applications()] do
       for {key, val} <- Application.get_all_env(app_name) do
         rpc(node, Application, :put_env, [app_name, key, val])
       end

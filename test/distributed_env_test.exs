@@ -2,7 +2,7 @@ defmodule DistributedEnvTest do
   use ExUnit.Case
 
   test "nodes are stopped and started at will" do
-    count = 6
+    count = 4
 
     DistributedEnv.start_link(count)
     assert length(Node.list()) === count

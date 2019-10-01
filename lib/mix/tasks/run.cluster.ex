@@ -21,10 +21,9 @@ defmodule Mix.Tasks.Run.Cluster do
     {switches, _, _} = OptionParser.parse(params, switches: [count: :integer])
 
     params =
-      case Keyword.has_key?(switches, :count) do
-        true -> remove_count(params)
-        false -> params
-      end
+      if Keyword.has_key?(switches, :count),
+        do: remove_param(params, "count"),
+        else: params
 
     Mix.Tasks.Run.run(["--no-start" | params])
 
@@ -43,8 +42,8 @@ defmodule Mix.Tasks.Run.Cluster do
         do: Enum.each(config, fn {k, v} -> Application.put_env(app, k, v) end)
   end
 
-  defp remove_count(params, acc \\ [])
-  defp remove_count([], acc), do: :lists.reverse(acc)
-  defp remove_count(["--count" | [_num | rem]], acc), do: :lists.reverse(acc) ++ rem
-  defp remove_count([head | rem], acc), do: remove_count(rem, [head | acc])
+  defp remove_param(params, name, acc \\ [])
+  defp remove_param([], _name, acc), do: :lists.reverse(acc)
+  defp remove_param(["--" <> name | [_num | rem]], name, acc), do: :lists.reverse(acc) ++ rem
+  defp remove_param([head | rem], name, acc), do: remove_param(rem, name, [head | acc])
 end
