@@ -27,12 +27,13 @@ defmodule Mix.Tasks.Run.Cluster do
 
     Mix.Tasks.Run.run(["--no-start" | params])
 
-    switches
-    |> Keyword.get(:count, @default_count)
-    |> DistributedEnv.start_link(app)
+    {:ok, _pid} =
+      switches
+      |> Keyword.get(:count, @default_count)
+      |> DistributedEnv.start_link(app)
 
     config_path = Mix.Project.config()[:config_path]
-    :rpc.multicall(Node.list(), Mix.Tasks.Run.Distributed, :load_config, [config_path])
+    :rpc.multicall(Node.list(), Mix.Tasks.Run.Cluster, :load_config, [config_path])
 
     :rpc.eval_everywhere(Application, :ensure_all_started, [app])
   end

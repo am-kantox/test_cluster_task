@@ -6,8 +6,8 @@ defmodule DistributedEnv do
 
   @timeout 30_000
 
-  @primary "-foo-0"
-  @slave "-foo-"
+  @primary "_0"
+  @slave "_"
   @host "127.0.0.1"
 
   def start_link(count, app \\ nil) do

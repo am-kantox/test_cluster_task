@@ -14,40 +14,22 @@ defmodule Mix.Tasks.Test.Cluster do
   @recursive true
   @preferred_cli_env :test
 
-  @default_count 4
-
   def run(params) do
-    unless System.get_env("MIX_ENV") || Mix.env() == :test do
-      IO.puts(
-        "⚑ “mix test.distributed” is running on environment “#{Mix.env()}”.\n" <>
-          "⚐   “mix test.distributed” is to be run on :test.\n" <>
-          "⚐   Resetting the environment to :test for you."
+    unless System.get_env("MIX_ENV") == "test" || Mix.env() == :test do
+      raise(
+        "\n⚑ “mix test.cluster” is running in environment “#{Mix.env()}”, " <>
+          "but it must be run in :test. Exiting."
       )
 
       Mix.env(:test)
+      Mix.Tasks.Compile.run([])
     end
 
-    {switches, _, _} = OptionParser.parse(params, switches: [count: :integer])
-
-    app = Mix.Project.config()[:app]
-    Mix.Tasks.Loadpaths.run([])
-    Application.ensure_started(app)
-
-    count = Keyword.get(switches, :count, @default_count)
-    DistributedEnv.start_link(count, app)
-
-    params =
-      if Keyword.has_key?(switches, :count),
-        do: remove_param(params, "count"),
-        else: params
+    Mix.Tasks.Run.Cluster.run()
+    Process.sleep(1_000)
 
     Mix.Tasks.Test.run(params)
 
     DistributedEnv.stop()
   end
-
-  defp remove_param(params, name, acc \\ [])
-  defp remove_param([], _name, acc), do: :lists.reverse(acc)
-  defp remove_param(["--" <> name | [_num | rem]], name, acc), do: :lists.reverse(acc) ++ rem
-  defp remove_param([head | rem], name, acc), do: remove_param(rem, name, [head | acc])
 end
