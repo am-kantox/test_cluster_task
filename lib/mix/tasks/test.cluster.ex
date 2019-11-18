@@ -25,7 +25,7 @@ defmodule Mix.Tasks.Test.Cluster do
       Mix.Tasks.Compile.run([])
     end
 
-    Mix.Tasks.Run.Cluster.run()
+    Mix.Tasks.Run.Cluster.run([])
     Process.sleep(1_000)
 
     Mix.Tasks.Test.run(params)
