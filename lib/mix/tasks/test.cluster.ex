@@ -15,13 +15,11 @@ defmodule Mix.Tasks.Test.Cluster do
   @preferred_cli_env :test
 
   def run(params) do
-    unless System.get_env("MIX_ENV") == "test" || Mix.env() == :test do
-      raise(
-        "\n⚑ “mix test.cluster” is running in environment “#{Mix.env()}”, " <>
-          "but it must be run in :test. Exiting."
+    unless System.get_env("MIX_ENV") in ["test", "ci"] || Mix.env() in [:test, :ci] do
+      IO.puts(
+        "\n⚑ “mix test.cluster” is running in environment “#{Mix.env()}”, but it’d better be run in :test."
       )
 
-      Mix.env(:test)
       Mix.Tasks.Compile.run([])
     end
 

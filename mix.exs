@@ -2,7 +2,7 @@ defmodule TestClusterTask.Mixfile do
   use Mix.Project
 
   @app :test_cluster_task
-  @version "0.5.0"
+  @version "0.5.1"
 
   def project do
     [
@@ -14,8 +14,14 @@ defmodule TestClusterTask.Mixfile do
       preferred_cli_env: [{:"test.cluster", :test}],
       description: description(),
       package: package(),
+      aliases: aliases(),
       deps: deps(),
-      docs: docs()
+      docs: docs(),
+      dialyzer: [
+        plt_file: {:no_warn, ".dialyzer/plts/dialyzer.plt"},
+        plt_add_apps: [:mix],
+        ignore_warnings: ".dialyzer/ignore.exs"
+      ]
     ]
   end
 
@@ -24,7 +30,22 @@ defmodule TestClusterTask.Mixfile do
   end
 
   defp deps do
-    [{:ex_doc, "~> 0.14", only: :dev}]
+    [
+      {:dialyxir, "~> 1.0.0-rc.6", only: [:dev, :test, :ci], runtime: false},
+      {:credo, "~> 1.0", only: [:dev, :test, :ci]},
+      {:ex_doc, "~> 0.11", only: :dev}
+    ]
+  end
+
+  defp aliases do
+    [
+      quality: ["format", "credo --strict", "dialyzer"],
+      "quality.ci": [
+        "format --check-formatted",
+        "credo --strict",
+        "dialyzer --halt-exit-status"
+      ]
+    ]
   end
 
   defp description do
@@ -39,6 +60,9 @@ defmodule TestClusterTask.Mixfile do
     [
       name: @app,
       files: ~w|config lib mix.exs README.md|,
+      source_ref: "v#{@version}",
+      canonical: "http://hexdocs.pm/#{@app}",
+      source_url: "https://github.com/am-kantox/#{@app}",
       maintainers: ["Aleksei Matiushkin"],
       licenses: ["MIT"],
       links: %{
@@ -50,7 +74,7 @@ defmodule TestClusterTask.Mixfile do
 
   defp docs do
     [
-      # main: "intro",
+      main: "readme",
       source_ref: "v#{@version}",
       canonical: "http://hexdocs.pm/#{@app}",
       # logo: "stuff/images/logo.png",

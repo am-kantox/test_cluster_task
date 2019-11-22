@@ -14,7 +14,7 @@ defmodule DistributedEnv do
     GenServer.start_link(__MODULE__, [count: count, app: app], name: __MODULE__)
   end
 
-  def stop(), do: GenServer.stop(__MODULE__)
+  def stop, do: GenServer.stop(__MODULE__)
 
   def init(count: count, app: app) do
     spawn_master(app)
@@ -24,7 +24,7 @@ defmodule DistributedEnv do
   end
 
   def terminate(_reason, _state) do
-    Enum.map(Node.list(), &:slave.stop/1)
+    Enum.each(Node.list(), &:slave.stop/1)
     :net_kernel.stop()
   end
 
