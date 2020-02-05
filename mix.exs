@@ -2,7 +2,7 @@ defmodule TestClusterTask.Mixfile do
   use Mix.Project
 
   @app :test_cluster_task
-  @version "0.5.1"
+  @version "0.5.2"
 
   def project do
     [
